@@ -23,7 +23,7 @@ namespace ConsoleCharGenerator
 
 
 
-            //SortedList<char, double> valuePairs = new SortedList<char, double>();
+            //SortedList<char, double> valuePairs = new SortedList<char, double>();//попытка пофиксить неупорядоченность, но вероятности у символов могут быть одинаковыми
             //for (int i = 0; i < alphabet.Length; i++)
             //{
             //    valuePairs.Add(alphabet[i], probabilities[i]);
@@ -37,7 +37,7 @@ namespace ConsoleCharGenerator
                 double q = random.NextDouble();
                 for (int j = 1; j < alphabet.Length; j++)
                 {
-                    if (q > probabilities[j - 1] && q < probabilities[j])
+                    if (q > probabilities[j - 1] && q < probabilities[j])//не факт что оно упорядочено
                     {
                         result.Append(alphabet[j]);
                     }
