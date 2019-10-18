@@ -12,7 +12,7 @@ namespace ConsoleCharGenerator
         private static Random random = new Random();
         static void Main(string[] args)
         {
-            string path = "";
+            string path = ""; //добавить пути
             //Tuple<char, double>[] tuple = new Tuple<char, double>[10];
             List<Tuple<char, double>> tuples = new List<Tuple<char, double>>();
             using (StreamReader reader = new StreamReader(path))
@@ -41,6 +41,10 @@ namespace ConsoleCharGenerator
             }
 
             Console.WriteLine(result.ToString());
+            using(StreamWriter writer=new StreamWriter(path))
+            {
+                writer.Write(result.ToString());
+            }
             Console.ReadLine();
         }
 
@@ -80,16 +84,6 @@ namespace ConsoleCharGenerator
                     return j;
                 }
             }
-        }
-
-        private static double[] ToDoubleArray(string[] src)
-        {
-            double[] res = new double[src.Length];
-            for (int i = 0; i < src.Length; i++)
-            {
-                res[i] = Convert.ToDouble(src[i]);
-            }
-            return res;
         }
     }
 }
