@@ -41,6 +41,16 @@ namespace CharGenerator
             return result.ToString();
         }
 
+        public Dictionary<char, double> GetDictionary()
+        {
+            Dictionary<char, double> pairs = new Dictionary<char, double>();
+            foreach (var item in Alphabet)
+            {
+                pairs.Add(item.Item1, item.Item2);
+            }
+            return pairs;
+        }
+
         private bool CheckProbability()
         {
             double sum = 0.0;

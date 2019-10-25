@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace CharGenerator
 {
     public class Analyzer
     {
-        private List<Tuple<char, double>> Alphabet { get; set; }
+        private Dictionary<char, double> Alphabet { get; set; }
         private string AnalyzedText { get; set; }
         private Dictionary<char, int> AllChars { get; set; } // словарь символов и их кол-во появлений
         private List<char> UniqueChars { get; set; } // словарь уникальных символов
         private Dictionary<char, double> AllCharOF { get; set; } // частность появления для каждого символа
-        private int Size { get; set; } //общий размер
+        private int Size { get; set; } //общий размер текста
         private int UniqueSize { get; set; } //кол-во уникальных символов
         private double UniqueOccurrenceFrequency { get; set; } // частость появления уникальных
         private double UnconditionalEntropy { get; set; } // безусловная энтропия (добавить условную?)
 
-        public Analyzer(string text, List<Tuple<char, double>> tuples)
-        {
+        public Analyzer(StreamReader reader, Dictionary<char, double> tuples)
+        { 
             Alphabet = tuples;
-            AnalyzedText = text;
+            AnalyzedText = reader.ReadToEnd();
             Size = AnalyzedText.Length;
             AllChars = ParseText();
             FindUniqueChars();
@@ -35,10 +36,23 @@ namespace CharGenerator
             CalcUnconditionalEntropy();
             StringBuilder builder = new StringBuilder();
             builder.Append("Формат записи: символ, вероятность появления, частость появления" + Environment.NewLine);
-            foreach (var pair in Alphabet)
+            foreach (var pair in AllChars)
             {
-                builder.Append(pair.Item1).Append(' ').Append(pair.Item2).Append(' ').Append()                
+                if (UniqueChars.Contains(pair.Key))
+                {
+                    continue;
+                }
+                builder.Append(pair.Key).Append(' ').Append(Alphabet[pair.Key]).Append(' ').Append(AllCharOF[pair.Key]).Append(Environment.NewLine);                
             }
+            builder.Append(Environment.NewLine).Append("Для уникальных символов: ").Append(Environment.NewLine)
+                .Append("Кол-во уникальных символов: ").Append(UniqueSize).Append(Environment.NewLine).Append("Уникальные символы: ");
+            foreach (var item in UniqueChars)
+            {
+                builder.Append(item).Append(' ');
+            }
+            builder.Append(Environment.NewLine).Append("Частость появления: ").Append(UniqueOccurrenceFrequency).Append(Environment.NewLine).Append(Environment.NewLine)
+                .Append("Безусловная энтропия: ").Append(UnconditionalEntropy);
+
             return builder.ToString();
         }
 

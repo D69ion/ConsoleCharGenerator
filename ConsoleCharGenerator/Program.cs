@@ -12,9 +12,28 @@ namespace ConsoleCharGenerator
     {
         static void Main(string[] args)
         {
-            string path = ""; //добавить пути
+            while (true)
+            {
+                //!(буква комманды) (путь файла) (имя выходного файла)
+                string[] com = Console.ReadLine().Split(' ');
+                switch (com[0])
+                {
+                    case "!g":
+                        {
+                            GenerateCom(com);
+                            break;
+                        }
+
+                }
+            }
+        }
+
+        private static void GenerateCom(string[] args)
+        {
+            string resFileName = args[2], analFileName = string.Concat(args[2], ' ', DateTime.Now);
+            string path = Path.GetDirectoryName(args[1]); 
             List<Tuple<char, double>> tuples = new List<Tuple<char, double>>();
-            using (StreamReader reader = new StreamReader(path))
+            using (StreamReader reader = new StreamReader(args[1]))
             {
                 string[] temp;
                 while (!reader.EndOfStream)
@@ -28,14 +47,18 @@ namespace ConsoleCharGenerator
             Generator generator = new Generator(tuples);
             string result = generator.CreateString();
 
-
-            Console.WriteLine(result.ToString());
-            using(StreamWriter writer=new StreamWriter(path))
+            //запись и анализ
+            using (StreamWriter writerAnal = new StreamWriter(Path.Combine(path, analFileName)),
+                                writerRes = new StreamWriter(Path.Combine(path, resFileName)))
             {
-                writer.Write(result.ToString());
+                writerRes.Write(result);
+                //Console.WriteLine(result);
+                using (StreamReader reader = new StreamReader(Path.Combine(path, resFileName)))
+                {
+                    Analyzer analyzer = new Analyzer(reader, generator.GetDictionary());
+                    writerAnal.Write(analyzer.Analyze());
+                }
             }
-            Console.ReadLine();
         }
-
     }
 }
