@@ -24,13 +24,21 @@ namespace ConsoleCharGenerator
                             break;
                         }
 
+                    case "!z":
+                        {
+
+                            break;
+                        }                           
                 }
+                Console.WriteLine("Done");
             }
         }
 
+        private static Random random = new Random();
         private static void GenerateCom(string[] args)
         {
-            string resFileName = args[2], analFileName = string.Concat(args[2], ' ', DateTime.Now);
+            string resFileName = string.Concat(args[2], ".txt"), 
+                analFileName = string.Concat(args[2], '_', random.Next(), ".txt");
             string path = Path.GetDirectoryName(args[1]); 
             List<Tuple<char, double>> tuples = new List<Tuple<char, double>>();
             using (StreamReader reader = new StreamReader(args[1]))
@@ -48,11 +56,13 @@ namespace ConsoleCharGenerator
             string result = generator.CreateString();
 
             //запись и анализ
-            using (StreamWriter writerAnal = new StreamWriter(Path.Combine(path, analFileName)),
-                                writerRes = new StreamWriter(Path.Combine(path, resFileName)))
+            using (StreamWriter writerRes = new StreamWriter(Path.Combine(path, resFileName)))
             {
                 writerRes.Write(result);
-                //Console.WriteLine(result);
+                //Console.WriteLine(result);               
+            }
+            using (StreamWriter writerAnal = new StreamWriter(Path.Combine(path, analFileName)))
+            {
                 using (StreamReader reader = new StreamReader(Path.Combine(path, resFileName)))
                 {
                     Analyzer analyzer = new Analyzer(reader, generator.GetDictionary());
