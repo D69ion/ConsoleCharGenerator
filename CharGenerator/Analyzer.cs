@@ -24,19 +24,24 @@ namespace CharGenerator
             Alphabet = tuples;
             AnalyzedText = reader.ReadToEnd();
             Size = AnalyzedText.Length;
-            AllChars = ParseText();
-            FindUniqueChars();
-            if(UniqueChars != null)
-            {
-                UniqueSize = UniqueChars.Count;
-            }
             AllCharOF = new Dictionary<char, double>();
         }
 
-        public string Analyze()
+        public void Analyze()
         {
+            AllChars = ParseText();
+            FindUniqueChars();
+            if (UniqueChars != null)
+            {
+                UniqueSize = UniqueChars.Count;
+                CalcUniqueOccurrenceFrequency();
+            }
             CalcOccurenceFrequencies();
             CalcUnconditionalEntropy();
+        }
+
+        public override string ToString()
+        {
             StringBuilder builder = new StringBuilder();
             builder.Append("Формат записи: символ, вероятность появления, частость появления" + Environment.NewLine);
             foreach (var pair in AllChars)
@@ -48,11 +53,10 @@ namespace CharGenerator
                         continue;
                     }
                 }
-                builder.Append(pair.Key).Append(' ').Append(Alphabet[pair.Key]).Append(' ').Append(AllCharOF[pair.Key]).Append(Environment.NewLine);                
+                builder.Append(pair.Key).Append(' ').Append(Alphabet[pair.Key]).Append(' ').Append(AllCharOF[pair.Key]).Append(Environment.NewLine);
             }
             if (UniqueChars != null)
             {
-                CalcUniqueOccurrenceFrequency();
                 builder.Append(Environment.NewLine).Append("Для уникальных символов: ").Append(Environment.NewLine)
                     .Append("Кол-во уникальных символов: ").Append(UniqueSize).Append(Environment.NewLine).Append("Уникальные символы: ");
                 foreach (var item in UniqueChars)

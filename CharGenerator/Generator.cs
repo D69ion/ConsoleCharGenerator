@@ -10,11 +10,13 @@ namespace CharGenerator
     {
         private Random random;
         private List<Tuple<char, double>> Alphabet { get; set; }
+        private int Length { get; set; }
 
-        public Generator(List<Tuple<char, double>> tuples)
+        public Generator(List<Tuple<char, double>> tuples, int length)
         {
             Alphabet = tuples;
             random = new Random();
+            Length = length;
         }
 
         public string CreateString()
@@ -27,7 +29,7 @@ namespace CharGenerator
             QSort(Alphabet, 0, Alphabet.Count - 1);
 
             StringBuilder result = new StringBuilder();
-            for (int i = 0; i < random.Next(60, 200); i++)
+            for (int i = 0; i < Length; i++)
             {
                 double q = random.NextDouble();
                 for (int j = 1; j < Alphabet.Count; j++)
