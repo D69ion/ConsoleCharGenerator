@@ -29,14 +29,14 @@ namespace CharGenerator
         {
             using (BinaryWriter writer = new BinaryWriter(File.OpenWrite(Path)))
             {
-                Dictionary<string, int> dictionary = new Dictionary<string, int>();
-                for (int i = 0; i < 256; i++)
+                Dictionary<string, ushort> dictionary = new Dictionary<string, ushort>();
+                for (ushort i = 0; i < 256; i++)
                 {
-                    dictionary.Add(i.ToString(), i);
+                    dictionary.Add(((char)i).ToString(), i);
                 }
 
                 string w = string.Empty;
-                List<int> compressed = new List<int>();
+                List<ushort> compressed = new List<ushort>();
 
                 foreach (var c in InputTextFile.ReadToEnd())
                 {
@@ -50,7 +50,7 @@ namespace CharGenerator
                         // write w to output
                         compressed.Add(dictionary[w]);
                         // wc is a new sequence; add it to the dictionary
-                        dictionary.Add(wc, dictionary.Count);
+                        dictionary.Add(wc, (ushort)dictionary.Count);
                         w = c.ToString();
                     }
                 }
@@ -73,18 +73,19 @@ namespace CharGenerator
         {
             using (StreamWriter writer = new StreamWriter(Path))
             {
-                Dictionary<int, string> dictionary = new Dictionary<int, string>();
-                for (int i = 0; i < 256; i++)
+                Dictionary<ushort, string> dictionary = new Dictionary<ushort, string>();
+                for (ushort i = 0; i < 256; i++)
                 {
-                    dictionary.Add(i, i.ToString());
+                    dictionary.Add(i, ((char)i).ToString());
                 }
 
-                int k = InputBinFile.ReadInt32();
+                ushort k = InputBinFile.ReadUInt16();
                 string w = dictionary[k];
                 StringBuilder decompressed = new StringBuilder(w);
 
-                while(k > -1)
+                while(InputBinFile.BaseStream.Position != InputBinFile.BaseStream.Length)
                 {
+                    k = InputBinFile.ReadUInt16();
                     string entry = string.Empty;
                     if (dictionary.ContainsKey(k))
                     {
@@ -98,10 +99,10 @@ namespace CharGenerator
                     decompressed.Append(entry);
 
                     // new sequence; add it to the dictionary
-                    dictionary.Add(dictionary.Count, w + entry[0]);
+                    dictionary.Add((ushort)dictionary.Count, w + entry[0]);
                     w = entry;
 
-                    k = InputBinFile.ReadInt32();
+                    
                 }
 
                 writer.Write(decompressed.ToString());

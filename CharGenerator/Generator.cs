@@ -32,11 +32,24 @@ namespace CharGenerator
             for (int i = 0; i < Length; i++)
             {
                 double q = random.NextDouble();
+
+                if (q > Alphabet[Alphabet.Count - 1].Item2)
+                {
+                    result.Append(Alphabet[Alphabet.Count - 1].Item1);
+                    continue;
+                }
+                if (q < Alphabet[0].Item2)
+                {
+                    result.Append(Alphabet[0].Item1);
+                    continue;
+                }
+
                 for (int j = 1; j < Alphabet.Count; j++)
                 {
                     if (q > Alphabet[j - 1].Item2 && q < Alphabet[j].Item2)
                     {
                         result.Append(Alphabet[j].Item1);
+                        continue;
                     }
                 }
             }

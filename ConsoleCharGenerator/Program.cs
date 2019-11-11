@@ -24,13 +24,13 @@ namespace ConsoleCharGenerator
                             GenerateCom(com);
                             break;
                         }
-
+                    //!z C:\Users\D69ion\Downloads\test_out.txt test_out
                     case "!z":
                         {
                             ZipFile(com);
                             break;
                         }
-
+                    //!uz C:\Users\D69ion\Downloads\test_out.bin unzip
                     case "!uz":
                         {
                             UnzipFile(com);
@@ -50,7 +50,7 @@ namespace ConsoleCharGenerator
         private static void UnzipFile(string[] args)
         {
             string zipFilePath = args[1];
-            string unzipFilePath = Path.Combine(Path.GetDirectoryName(args[1]), args[2], ".txt");
+            string unzipFilePath = Path.Combine(Path.GetDirectoryName(args[1]), args[2] + ".txt");
             using (BinaryReader reader = new BinaryReader(File.OpenRead(zipFilePath)))
             {
                 LZWzip zip = new LZWzip(reader, unzipFilePath);
@@ -61,7 +61,7 @@ namespace ConsoleCharGenerator
         private static void ZipFile(string[] args)
         {
             string origFilePath = args[1];
-            string zipFilePath = Path.Combine(Path.GetDirectoryName(args[1]), args[2], ".bin");
+            string zipFilePath = Path.Combine(Path.GetDirectoryName(args[1]), args[2] + ".bin");
             using (StreamReader reader = new StreamReader(origFilePath))
             {
                 LZWzip zip = new LZWzip(reader, zipFilePath);
