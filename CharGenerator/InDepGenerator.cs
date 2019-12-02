@@ -6,39 +6,37 @@ using System.Threading.Tasks;
 
 namespace CharGenerator
 {
-    public class Generator
+    public class InDepGenerator
     {
-        private Random random;
+        private static Random random;
         private List<Tuple<char, double>> Alphabet { get; set; }
-        private int Length { get; set; }
 
-        public Generator(List<Tuple<char, double>> tuples, int length)
+        public InDepGenerator(List<Tuple<char, double>> tuples)
         {
             Alphabet = tuples;
             random = new Random();
-            Length = length;
         }
 
-        public string CreateString()
+        public string CreateString(int length)
         {
             if (!CheckProbability())
             {
                 return null;
             }
 
-            QSort(Alphabet, 0, Alphabet.Count - 1);
+            double[] ranges = CalcRanges();
 
             StringBuilder result = new StringBuilder();
-            for (int i = 0; i < Length; i++)
+            for (int i = 0; i < length; i++)
             {
                 double q = random.NextDouble();
 
-                if (q > Alphabet[Alphabet.Count - 1].Item2)
+                if (q > ranges[Alphabet.Count - 1])
                 {
                     result.Append(Alphabet[Alphabet.Count - 1].Item1);
                     continue;
                 }
-                if (q < Alphabet[0].Item2)
+                if (q < ranges[0])
                 {
                     result.Append(Alphabet[0].Item1);
                     continue;
@@ -46,14 +44,25 @@ namespace CharGenerator
 
                 for (int j = 1; j < Alphabet.Count; j++)
                 {
-                    if (q > Alphabet[j - 1].Item2 && q < Alphabet[j].Item2)
+                    if (q > ranges[j - 1] && q < ranges[j])
                     {
                         result.Append(Alphabet[j].Item1);
-                        continue;
+                        break;
+
                     }
                 }
             }
             return result.ToString();
+        }
+
+        private double[] CalcRanges()
+        {
+            double[] vs = new double[Alphabet.Count];
+            for (int i = 1; i < Alphabet.Count; i++)
+            {
+                vs[i] = vs[i - 1] + Alphabet[i - 1].Item2;
+            }
+            return vs;
         }
 
         public Dictionary<char, double> GetDictionary()
@@ -76,44 +85,5 @@ namespace CharGenerator
             }
             return sum - 1 < EPS;
         }
-
-        private void QSort(List<Tuple<char, double>> tuples, int i, int j)
-        {
-            if (i < j)
-            {
-                int q = Partition(ref tuples, i, j);
-                QSort(tuples, i, q);
-                QSort(tuples, q + 1, j);
-            }
-        }
-
-        private int Partition(ref List<Tuple<char, double>> tuples, int p, int r)
-        {
-            double x = tuples[p].Item2;
-            int i = p - 1;
-            int j = r + 1;
-            while (true)
-            {
-                do
-                {
-                    j--;
-                }
-                while (tuples[j].Item2 > x);
-                do
-                {
-                    i++;
-                }
-                while (tuples[i].Item2 < x);
-                if (i < j)
-                {
-                    (tuples[i], tuples[j]) = (tuples[j], tuples[i]);
-                }
-                else
-                {
-                    return j;
-                }
-            }
-        }
-
     }
 }

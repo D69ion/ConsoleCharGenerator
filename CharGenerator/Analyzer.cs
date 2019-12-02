@@ -17,7 +17,8 @@ namespace CharGenerator
         private int Size { get; set; } //общий размер текста
         private int? UniqueSize { get; set; } //кол-во уникальных символов
         private double UniqueOccurrenceFrequency { get; set; } // частость появления уникальных
-        private double UnconditionalEntropy { get; set; } // безусловная энтропия (добавить условную?)
+        private double UnconditionalEntropy { get; set; } // безусловная энтропия  
+        private double ConditionalEntropy { get; set; } //условная энтропия
 
         public Analyzer(StreamReader reader, Dictionary<char, double> tuples)
         { 
@@ -64,6 +65,10 @@ namespace CharGenerator
                     builder.Append(item).Append(' ');
                 }
                 builder.Append(Environment.NewLine).Append("Частость появления: ").Append(UniqueOccurrenceFrequency).Append(Environment.NewLine);
+            }
+            else
+            {
+                builder.Append("Уникальные символы отсутствуют");
             }
             builder.Append(Environment.NewLine).Append("Безусловная энтропия: ").Append(UnconditionalEntropy);
 

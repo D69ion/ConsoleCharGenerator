@@ -47,15 +47,12 @@ namespace CharGenerator
                     }
                     else
                     {
-                        // write w to output
                         compressed.Add(dictionary[w]);
-                        // wc is a new sequence; add it to the dictionary
                         dictionary.Add(wc, (ushort)dictionary.Count);
                         w = c.ToString();
                     }
                 }
 
-                // write remaining output if necessary
                 if (!string.IsNullOrEmpty(w))
                 {
                     compressed.Add(dictionary[w]);
@@ -98,7 +95,6 @@ namespace CharGenerator
 
                     decompressed.Append(entry);
 
-                    // new sequence; add it to the dictionary
                     dictionary.Add((ushort)dictionary.Count, w + entry[0]);
                     w = entry;
 

@@ -19,31 +19,42 @@ namespace ConsoleCharGenerator
                 string[] com = Console.ReadLine().Split(' ');
                 switch (com[0])
                 {
-                    case "!g":
+                    //!gi D:\Projects\Test\test.txt test_out 400
+                    case "!gi":
                         {
-                            GenerateCom(com);
+                            GenerateInDepCharCom(com);
+                            Console.WriteLine("Done");
                             break;
                         }
-                    //!z C:\Users\D69ion\Downloads\test_out.txt test_out
+                    //!gd D:\Projects\Test\test1.txt test1_out 400
+                    case "!gd":
+                        {
+                            GenerateDepCharCom(com);
+                            Console.WriteLine("Done");
+                            break;
+                        }
+                    //!z D:\Projects\Test\test_out.txt test_out
                     case "!z":
                         {
                             ZipFile(com);
+                            Console.WriteLine("Done");
                             break;
                         }
-                    //!uz C:\Users\D69ion\Downloads\test_out.bin unzip
+                    //!uz D:\Projects\Test\test_out.bin unzip
                     case "!uz":
                         {
                             UnzipFile(com);
+                            Console.WriteLine("Done");
                             break;
                         }
                     //!comp (путь файла оригинального) (путь файла сжатого)
                     case "!comp":
                         {
                             CompareFiles(com);
+                            Console.WriteLine("Done");
                             break;
                         }
                 }
-                Console.WriteLine("Done");
             }
         }
 
@@ -80,7 +91,7 @@ namespace ConsoleCharGenerator
         }
 
         private static Random random = new Random();
-        private static void GenerateCom(string[] args)
+        private static void GenerateInDepCharCom(string[] args)
         {
             string resFileName = string.Concat(args[2], ".txt"),
                 analFileName = string.Concat(args[2], '_', random.Next(), ".txt");
@@ -97,14 +108,13 @@ namespace ConsoleCharGenerator
             }
             tuples.TrimExcess();
 
-            Generator generator = new Generator(tuples, int.Parse(args[3]));
-            string result = generator.CreateString();
+            InDepGenerator generator = new InDepGenerator(tuples);
+            string result = generator.CreateString(int.Parse(args[3]));
 
             //запись и анализ
             using (StreamWriter writerRes = new StreamWriter(Path.Combine(path, resFileName)))
             {
                 writerRes.Write(result);
-                //Console.WriteLine(result);               
             }
             using (StreamWriter writerAnal = new StreamWriter(Path.Combine(path, analFileName)))
             {
@@ -115,6 +125,47 @@ namespace ConsoleCharGenerator
                     writerAnal.Write(analyzer.ToString());
                 }
             }
+        }
+
+        private static void GenerateDepCharCom(string[] args)
+        {
+            string resFileName = string.Concat(args[2], ".txt"),
+                analFileName = string.Concat(args[2], '_', random.Next(), ".txt");
+            string path = Path.GetDirectoryName(args[1]);
+            string symbols = "";
+            double[,] probabilities;
+            using (StreamReader reader = new StreamReader(args[1]))
+            {
+                symbols = reader.ReadLine().Replace(" ", "");
+                probabilities = new double[symbols.Length, symbols.Length];
+                int i = 0;
+                while (!reader.EndOfStream)
+                {
+                    string[] temp = reader.ReadLine().Split(' ');
+                    for (int j = 0; j < temp.Length; j++)
+                    {
+                        probabilities[i, j] = double.Parse(temp[j]);
+                    }
+                    i++;
+                }
+            }
+
+            DepGenerator generator = new DepGenerator(symbols, probabilities);
+            string result = generator.CreateString(int.Parse(args[3]));
+
+            using (StreamWriter writerRes = new StreamWriter(Path.Combine(path, resFileName)))
+            {
+                writerRes.Write(result);
+            }
+            //using (StreamWriter writerAnal = new StreamWriter(Path.Combine(path, analFileName)))
+            //{
+            //    using (StreamReader reader = new StreamReader(Path.Combine(path, resFileName)))
+            //    {
+            //        Analyzer analyzer = new Analyzer(reader, generator.GetDictionary());
+            //        analyzer.Analyze();
+            //        writerAnal.Write(analyzer.ToString());
+            //    }
+            //}
         }
     }
 }
